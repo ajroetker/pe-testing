@@ -1,0 +1,12 @@
+/tarballs/
+*install*
+/.vagrant/
+/versions/
+/packages/
+*.tar
+*.tar.gz
+beaker.cfg
+/log/
+/junit/
+puppet-enterprise
+*.sw?

@@ -1,0 +1,88 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+
+services = {
+    "pe-master"     => "debian73",
+    "pe-puppetdb"   => "debian73",
+    "pe-console"    => "debian73",
+    "pe-monolithic" => "debian73",
+}
+
+agents   = {
+  "pe-squeeze"  => "debian607",
+  "pe-centos5"  => "centos59",
+  "pe-centos6"  => "centos64",
+  "pe-sles11"   => "sles11sp1",
+  "pe-wheezy"   => "debian73",
+  "pe-ubuntu10" => "ubuntu10044",
+  "pe-ubuntu12" => "ubuntu12042",
+}
+
+public_key = File.read(File.expand_path('~/.ssh/authorized_keys'))
+bashrc = File.read(File.expand_path('./files/.bashrc'))
+
+ssh_provisioner = <<PROVISION
+mkdir -p ~/.ssh
+cat <<PUBLIC_KEY > ~/.ssh/authorized_keys
+#{public_key}
+PUBLIC_KEY
+PROVISION
+
+bashrc_provisioner= <<PROVISION
+cat <<BASHRC > ~/.bashrc
+#{bashrc}
+BASHRC
+PROVISION
+
+
+Vagrant.configure("2") do |config|
+
+    services.each_with_index do |(name, box), idx|
+      config.vm.define name do |service_config|
+          service_config.vm.box = box
+
+          ip = "172.16.1.#{110 + idx}"
+          service_config.vm.network :private_network, :ip => ip
+          service_config.vm.hostname = "#{name}.aroetker.lan"
+
+          service_config.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+              vb.customize ['modifyvm', :id, '--memory', 2048]
+          end
+
+          service_config.vm.provision :shell, :inline => ssh_provisioner
+          service_config.vm.provision :shell, :inline => bashrc_provisioner
+          service_config.vm.provision :shell, :inline => <<PROVISION
+apt-get update && apt-get install vim tree dpkg-dev -y
+echo 'APT::Get::AllowUnauthenticated "true";' > /etc/apt/apt.conf.d/90unauthenticated
+sed -i -e 's/192.168.0.172//' -e 's/pigiron.example.com//' -e 's/pigiron//' -e 's/piggy//' /etc/hosts
+echo "192.168.0.172 pigiron.example.com pigiron piggy" >> /etc/hosts
+sed -i -e 's/#{ip}//' -e 's/#{name}.aroetker.lan//' -e 's/#{name}//' /etc/hosts
+echo "#{ip} #{name}.aroetker.lan #{name}" >> /etc/hosts
+PROVISION
+      end
+    end
+
+  agents.each_with_index do |(name, box), idx|
+    config.vm.define name do |agent_config|
+      agent_config.vm.box = box
+
+      ip = "172.16.1.#{100 + idx + 1}"
+      agent_config.vm.network :private_network, :ip => ip
+      agent_config.vm.hostname = "#{name}.aroetker.lan"
+
+      agent_config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+
+      agent_config.vm.provision :shell, :inline => ssh_provisioner
+      agent_config.vm.provision :shell, :inline => <<PROVISION
+sed -i -e 's/#{name}.aroetker.lan//' -e 's/#{name}//' /etc/hosts
+echo "#{ip} #{name}.aroetker.lan #{name}" >> /etc/hosts
+PROVISION
+    end
+  end
+end
+#curl -k https://pe-master.aroetker.lan:8140/packages/current/install.bash | bash
+#echo "deb file:/vagrant/puppet-enterprise/packages/debian-6-amd64/ ./" >> /etc/apt/sources.list.d/puppet-enterprise-module.list
