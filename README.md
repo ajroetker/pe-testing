@@ -1,3 +1,10 @@
+#Setup
+------
+```
+bundle exec puppet apply init.pp
+```
+You'll also want to put your public key in your `~/.ssh/authorized_keys` as well as adding the info in `pe-testing/files/hosts.example` to your `/etc/hosts`.
+
 #Test PE
 --------
 ##Monolithic
@@ -36,6 +43,7 @@ If you don't with to use beaker to install PE, the vagrant boxes will come with 
 
 #Workflow
 ---------
+I recommend adding `pe-testing/scripts` to your `$PATH` to make things easier.  
 My usual workflow:
 - Pull down changes to `puppetlabs-puppet_enterprise` and `enterprise-dist`
 - Check for updates to `pe_acceptance_tests`

@@ -1,0 +1,5 @@
+172.16.1.110 pe-master.aroetker.lan pe-master
+172.16.1.111 pe-puppetdb.aroetker.lan pe-puppetdb
+172.16.1.112 pe-console.aroetker.lan pe-console
+172.16.1.113 pe-monolithic.aroetker.lan pe-monolithic
+172.16.1.101 pe-sles11.aroetker.lan pe-sles11
