@@ -2,7 +2,7 @@
 
 set -e
 
-while getopts c name; do
+while getopts cfn name; do
     case "$name" in
         c)
             PE_PLATFORM=${PE_PLATFORM:-'el-6-x86_64'}

@@ -56,8 +56,6 @@ Vagrant.configure("2") do |config|
           service_config.vm.provision :shell, :inline => <<PROVISION
 apt-get update && apt-get install vim tree dpkg-dev -y
 echo 'APT::Get::AllowUnauthenticated "true";' > /etc/apt/apt.conf.d/90unauthenticated
-sed -i -e 's/192.168.0.172//' -e 's/pigiron.example.com//' -e 's/pigiron//' -e 's/piggy//' /etc/hosts
-echo "192.168.0.172 pigiron.example.com pigiron piggy" >> /etc/hosts
 sed -i -e 's/#{ip}//' -e 's/#{name}.aroetker.lan//' -e 's/#{name}//' /etc/hosts
 echo "#{ip} #{name}.aroetker.lan #{name}" >> /etc/hosts
 PROVISION
