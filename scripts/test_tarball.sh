@@ -39,7 +39,7 @@ HOSTS:
       - agent
     platform: ${target_platform?}
     pe_ver: ${PE_VER?}-test
-    pe_dir: $(pwd)
+    pe_dir: ${pe_testing}/tarballs
 CONFIG:
   nfs_server: none
   consoleport: 443
@@ -53,21 +53,21 @@ HOSTS:
       - agent
     platform: ${target_platform?}
     pe_ver: ${PE_VER?}-test
-    pe_dir: $(pwd)
+    pe_dir: ${pe_testing}/tarballs
   pe-puppetdb:
     roles:
       - database
       - agent
     platform: ${target_platform?}
     pe_ver: ${PE_VER?}-test
-    pe_dir: $(pwd)
+    pe_dir: ${pe_testing}/tarballs
   pe-console:
     roles:
       - dashboard
       - agent
     platform: ${target_platform?}
     pe_ver: ${PE_VER?}-test
-    pe_dir: ${pe_testing}
+    pe_dir: ${pe_testing}/tarballs
 CONFIG:
   nfs_server: none
   consoleport: 443
