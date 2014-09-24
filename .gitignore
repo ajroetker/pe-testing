@@ -10,3 +10,4 @@ beaker.cfg
 /junit/
 puppet-enterprise
 *.sw?
+bin/
