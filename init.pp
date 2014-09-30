@@ -12,6 +12,7 @@ file { [ $pe_testing,
          $files,
          $tarballs,
          $versions,
+         $boxes,
          $answers, ] :
            ensure => directory,
 }
