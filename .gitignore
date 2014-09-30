@@ -3,6 +3,7 @@
 /.vagrant/
 /versions/
 /packages/
+/boxes/
 *.tar
 *.tar.gz
 beaker.cfg

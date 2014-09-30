@@ -57,6 +57,8 @@ add_and_commit_changes() {
 }
 
 make_headless_changes() {
+    # sometimes this gets left over between runs
+    rm -f "${pe_testing}/versions/${target?}/answers.lastrun.*.aroetker.lan"
     log "Checking out to headless branch; discarding any previous existing changes"
     git -C "${pe_testing}/versions/${target?}" checkout $(git -C "${pe_testing}/versions/${target?}" rev-parse master) > /dev/null
     #copy everything in the installer directory we need

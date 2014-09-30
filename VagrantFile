@@ -7,6 +7,7 @@ services = {
     "pe-puppetdb"   => "debian-73-x64-virtualbox-nocm",
     "pe-console"    => "debian-73-x64-virtualbox-nocm",
     "pe-monolithic" => "debian-73-x64-virtualbox-nocm",
+    "pe-kermit"  => "debian-73-x64-virtualbox-pe301",
 }
 
 agents   = {
