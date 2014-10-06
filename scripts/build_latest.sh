@@ -2,13 +2,16 @@
 
 set -e
 
-while getopts cfn name; do
+while getopts cfbn name; do
     case "$name" in
         c)
             PE_PLATFORM=${PE_PLATFORM:-'el-6-x86_64'}
             ;;
         f)
             force_fetch='y'
+            ;;
+        b)
+            build_only='y'
             ;;
         n)
             download_latest='n'
@@ -18,14 +21,22 @@ while getopts cfn name; do
     esac
 done
 
-pe_testing="$( dirname "${BASH_SOURCE[0]}" )/.."
-enterprise_dist="${pe_testing}/../enterprise-dist"
-pe_module="${pe_testing}/../puppetlabs-puppet_enterprise"
-version=${PE_VERSION:-'3.4'}
-target_version=${PE_TAG:-$(curl --silent neptune.puppetlabs.lan/${version}/ci-ready/LATEST)}
-target_platform=${PE_PLATFORM:-'debian-7-amd64'}
+init() {
+    pe_testing="$( dirname "${BASH_SOURCE[0]}" )/.."
+    enterprise_dist="${pe_testing}/../enterprise-dist"
+    pe_module="${pe_testing}/../puppetlabs-puppet_enterprise"
+    version=${PE_VERSION:-'3.4'}
+    current_version=$(basename "$(readlink puppet-enterprise)")
+    if [ "${build_only}" != 'y' ]; then
+        target_version=${PE_TAG:-$(curl --silent neptune.puppetlabs.lan/${version}/ci-ready/LATEST)}
+        target_platform=${PE_PLATFORM:-'debian-7-amd64'}
 
-target="${target_version?}-${target_platform?}"
+        target="${target_version?}-${target_platform?}"
+    else
+        target="${current_version}"
+    fi
+}
+
 
 log() {
     echo "[ INFO ] ${1?}"
@@ -80,16 +91,19 @@ make_headless_changes() {
     add_and_commit_changes 'Copied puppetlabs-puppet_enterprise'
 }
 
-if [ "${download_latest}" != 'n' ] && [ ! -e "${pe_testing}/versions/${target?}" -o "${force_fetch}" == 'y' ]; then
-    fetch_latest
-    unpack_tarball
-    make_version_repo
-    pushd "${pe_testing}" &> /dev/null
-    current_version=$(basename "$(readlink puppet-enterprise)")
-    rm -f puppet-enterprise
-    ln -s versions/$target puppet-enterprise
-    log "Linked ${target?}"
-    popd &> /dev/null
+init
+
+if [ "${build_only}" != 'y' ]; then
+    if [ "${download_latest}" != 'n' ] && [ ! -e "${pe_testing}/versions/${target?}" -o "${force_fetch}" == 'y' ]; then
+        fetch_latest
+        unpack_tarball
+        make_version_repo
+        pushd "${pe_testing}" &> /dev/null
+        rm -f puppet-enterprise
+        ln -s versions/$target puppet-enterprise
+        log "Linked ${target?}"
+        popd &> /dev/null
+    fi
 fi
 
 make_headless_changes
