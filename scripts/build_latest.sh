@@ -75,7 +75,7 @@ make_headless_changes() {
     #copy everything in the installer directory we need
     installer_dir="${enterprise_dist}/installer"
     log "Copying enterprise-dist files"
-    for file in "puppet-enterprise-installer" "puppet-enterprise-uninstaller" "utilities" "db_import_export.rake" "pe-classification.rb" "update-superuser-password.rb"; do
+    for file in "puppet-enterprise-installer" "puppet-enterprise-uninstaller" "utilities" "db_import_export.rake" "environments.rake" "pe-classification.rb" "update-superuser-password.rb"; do
         cp "${installer_dir}/${file}" "${pe_testing}/versions/${target?}"
     done
     #copy everything else
