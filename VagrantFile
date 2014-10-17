@@ -3,16 +3,16 @@
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 
 services = {
-    "pe-master"     => "puppetlabs/debian-7.5-32-nocm",
-    "pe-puppetdb"   => "puppetlabs/debian-7.5-32-nocm",
-    "pe-console"    => "puppetlabs/debian-7.5-32-nocm",
-    "pe-monolithic" => "puppetlabs/debian-7.5-32-nocm",
+    "pe-master"     => "puppetlabs/debian-7.4-64-nocm",
+    "pe-puppetdb"   => "puppetlabs/debian-7.4-64-nocm",
+    "pe-console"    => "puppetlabs/debian-7.4-64-nocm",
+    "pe-monolithic" => "puppetlabs/debian-7.4-64-nocm",
     "pe-kermit"     => "puppetlabs/debian-7.5-64-puppet-enterprise",
 }
 
 agents   = {
-  "pe-agent"   => "puppetlabs/debian-7.5-32-nocm",
-  "pe-centos6" => "puppetlabs/centos-6.5-32-nocm",
+  "pe-agent"   => "puppetlabs/debian-7.4-64-nocm",
+  "pe-centos6" => "puppetlabs/centos-6.5-64-nocm",
 }
 
 public_key = File.read(File.expand_path('~/.ssh/authorized_keys'))
