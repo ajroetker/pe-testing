@@ -3,16 +3,16 @@
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 
 services = {
-    "pe-master"     => "debian-73-x64-virtualbox-nocm",
-    "pe-puppetdb"   => "debian-73-x64-virtualbox-nocm",
-    "pe-console"    => "debian-73-x64-virtualbox-nocm",
-    "pe-monolithic" => "debian-73-x64-virtualbox-nocm",
-    "pe-kermit"  => "debian-73-x64-virtualbox-pe301",
+    "pe-master"     => "puppetlabs/debian-7.5-32-nocm",
+    "pe-puppetdb"   => "puppetlabs/debian-7.5-32-nocm",
+    "pe-console"    => "puppetlabs/debian-7.5-32-nocm",
+    "pe-monolithic" => "puppetlabs/debian-7.5-32-nocm",
+    "pe-kermit"     => "puppetlabs/debian-7.5-64-puppet-enterprise",
 }
 
 agents   = {
-  "pe-agent"   => "debian-73-x64-virtualbox-nocm",
-  "pe-centos6" => "centos-65-x64-virtualbox-nocm",
+  "pe-agent"   => "puppetlabs/debian-7.5-32-nocm",
+  "pe-centos6" => "puppetlabs/centos-6.5-32-nocm",
 }
 
 public_key = File.read(File.expand_path('~/.ssh/authorized_keys'))
@@ -36,7 +36,6 @@ Vagrant.configure("2") do |config|
 
     services.each_with_index do |(name, box), idx|
       config.vm.define name do |service_config|
-          service_config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/#{box}.box"
           service_config.vm.box = box
 
           ip = "172.16.1.#{110 + idx}"
@@ -61,7 +60,6 @@ PROVISION
 
   agents.each_with_index do |(name, box), idx|
     config.vm.define name do |agent_config|
-      agent_config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/#{box}.box"
       agent_config.vm.box = box
 
       ip = "172.16.1.#{100 + idx + 1}"
