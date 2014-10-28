@@ -11,8 +11,8 @@ services = {
 }
 
 agents   = {
-  "pe-agent"   => "puppetlabs/debian-7.4-64-nocm",
-  "pe-centos6" => "puppetlabs/centos-6.5-64-nocm",
+    "pe-agent"   => "puppetlabs/debian-7.4-64-nocm",
+    #"pe-centos6" => "puppetlabs/centos-6.5-64-nocm",
 }
 
 public_key = File.read(File.expand_path('~/.ssh/authorized_keys'))
@@ -31,6 +31,14 @@ cat <<BASHRC > ~/.bashrc
 BASHRC
 PROVISION
 
+apt_provisioner= <<PROVISION
+mkdir -p /etc/apt/sources.list.d
+echo "deb file:/vagrant/puppet-enterprise/packages/debian-7-amd64 ./" > /etc/apt/sources.list.d/puppet-enterprise-installer.list
+apt-key add /vagrant/puppet-enterprise/gpg/GPG-KEY-puppetlabs
+echo 'APT::Get::AllowUnauthenticated "true";' > /etc/apt/apt.conf.d/90unauthenticated
+apt-get update -q -y
+apt-get install vim tree dpkg-dev -y
+PROVISION
 
 Vagrant.configure("2") do |config|
 
@@ -44,13 +52,17 @@ Vagrant.configure("2") do |config|
 
           service_config.vm.provider :virtualbox do |vb|
               vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-              vb.customize ['modifyvm', :id, '--memory', 2048]
+              if name == "pe-monolithic"
+                  vb.customize ['modifyvm', :id, '--memory', 4096]
+              else
+                  vb.customize ['modifyvm', :id, '--memory', 2048]
+              end
           end
 
           service_config.vm.provision :shell, :inline => ssh_provisioner
           service_config.vm.provision :shell, :inline => bashrc_provisioner
+          service_config.vm.provision :shell, :inline => apt_provisioner
           service_config.vm.provision :shell, :inline => <<PROVISION
-apt-get update && apt-get install vim tree dpkg-dev -y
 echo 'APT::Get::AllowUnauthenticated "true";' > /etc/apt/apt.conf.d/90unauthenticated
 sed -i -e 's/#{ip}//' -e 's/#{name}.aroetker.lan//' -e 's/#{name}//' /etc/hosts
 echo "#{ip} #{name}.aroetker.lan #{name}" >> /etc/hosts

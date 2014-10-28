@@ -25,7 +25,7 @@ init() {
     pe_testing="$( dirname "${BASH_SOURCE[0]}" )/.."
     enterprise_dist="${pe_testing}/../enterprise-dist"
     pe_module="${pe_testing}/../puppetlabs-puppet_enterprise"
-    version=${PE_VERSION:-'3.4'}
+    version=${PE_VERSION:-'3.7'}
     current_version=$(basename "$(readlink puppet-enterprise)")
     if [ "${build_only}" != 'y' ]; then
         target_version=${PE_TAG:-$(curl --silent neptune.puppetlabs.lan/${version}/ci-ready/LATEST)}
